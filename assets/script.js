@@ -5,7 +5,10 @@
 
 
 /* PREMIERE ETAPE : Utilisation de Fetch pour la récupération des données du back-end. */
+let allWorks = []; // Variable globale pour stocker tous les travaux.
+let categories = []; // Variable globale pour stocker les catégories.
 
+// Fonction pour récupérer les travaux depuis le backend.
 async function fetchWorks() { /* Création d'une fonction asynchrone pour récupérer les travaux et pouvoir utiliser "await". */
 
   const response = await fetch("http://localhost:5678/api/works"); /* Envoie une requête au serveur pour récupérer les projets. */
@@ -19,11 +22,9 @@ async function fetchWorks() { /* Création d'une fonction asynchrone pour récup
 
 
 //* DEUXIEME ETAPE : Création du contenu dynamique du site (photos de la biblioteque de l'architecte).
-
 async function displayGallery(works) { // Création d'une fonction asynchrone pour afficher la galerie, utilise "await" pour attendre les données de l’API.
 
   const gallery = document.querySelector(".gallery"); // Cible l’endroit où afficher mes images dans le HTML.
-
   gallery.innerHTML = ""; // Vide la galerie pour repartir à zéro.                                               A REVOIR
 
   try {
@@ -52,9 +53,6 @@ async function displayGallery(works) { // Création d'une fonction asynchrone po
 
 
 //* Troisième étape : Affichage dynamique des travaux dans la galerie.
-
-let allWorks = []; // Variable globale pour stocker tous les travaux.
-
 // Récupération des catégories depuis le backend.
 async function fetchCategories() {
 
@@ -85,7 +83,6 @@ async function createFilterButtons(listeCategories) {
     button.textContent = category.name; // Ajout du nom de la catégorie comme texte du bouton.
     button.id = category.id; // Ajout de l'ID de la catégorie comme ID du bouton.
     filtersDiv.appendChild(button); // Ajout du bouton à la section des filtres.
-
   });
 
   // Ecouteurs de clics pour les filtres
@@ -103,9 +100,7 @@ async function createFilterButtons(listeCategories) {
       }
       displayGallery(filteredWorks); // Affiche la galerie avec les travaux filtrés.
     });
-
   });
-
 }
 
 // ---------------------------------------------------------------------------------------------------------
@@ -113,11 +108,10 @@ async function createFilterButtons(listeCategories) {
 
 async function init () { // Fonction asynchrone pour lancer l'affichage de la galerie.
 
-  const allWorks = await fetchWorks(); // Récupère les travaux en attendant la réponse de l'API.
+  allWorks = await fetchWorks(); // Récupère les travaux en attendant la réponse de l'API.
     displayGallery(allWorks); // Affiche la galerie avec les travaux récupérés.
-  const categories = await fetchCategories(); // Récupère les catégories en attendant la réponse de l'API.
+  categories = await fetchCategories(); // Récupère les catégories en attendant la réponse de l'API.
     createFilterButtons(categories); // Crée les boutons de filtre avec les catégories récupérées.
-
 }
 
 init(); // Appelle la fonction d'initialisation pour démarrer le processus.
