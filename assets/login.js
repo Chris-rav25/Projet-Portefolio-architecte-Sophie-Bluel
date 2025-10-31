@@ -1,12 +1,12 @@
 /*********************************************************************************
- * Ce fichier contient toutes les fonctions nécessaires au fonctionnement de la page de connexion "login".
- * Le chargement du DOM à été fait avec "defer" dans la balise du lien dans le head.
+ * Ce fichier contient toutes les fonctions nécessaires au fonctionnement de la page de connexion "login"
+ * Le chargement du DOM à été fait avec "defer" dans la balise du lien dans le head
  * Ce code va permettre :
 *   - de gérer la soumission du formulaire de connexion
 *   - empêcher le rechargement de la page
 *   - envoyer une requête POST à l'API avec les identifiants
 *   - stocker le jeton d'authentification (authToken) en cas de succès 
-*   - rediriger la page d'accueil (index.html)
+*   - rediriger vers la page d'accueil (index.html)
 *   - afficher un message d'erreur en cas d'echec de la connexion
 /********************************************************************************/
 
@@ -14,9 +14,10 @@
 const API_BASE_URL = "http://localhost:5678/api";
 
 /* PREMIERE ETAPE : Configuration et ciblage */
+
 //Ciblage des éléments du DOM
 const loginForm = document.querySelector("#formulaire form"); // Selectionne le formulaire de connexion
-const emailInput = document.getElementById("email"); 
+const emailInput = document.getElementById("email");
 const passwordInput = document.getElementById("password");
 const errorMessageEl = document.getElementById("login-error-message"); // Mettre cet Id dans le HTML pour afficher les messages d'erreur
 
@@ -29,15 +30,18 @@ if (loginForm) {
 
 
 /* TROISIEME ETAPE : Fonction de gestion de la connexion asynchrone*/
+
 /**
- * Gère la soumission du formulaire de connexion et la communication avec l'API.
- * @param {Event} e - L'objet événement de soumission.
+ * Gère la soumission du formulaire de connexion et la communication avec l'API
+ * @param {Event} e
+ * Cette fonction reçoit un paramètre nommé "e". Ce paramètre est un objet d'événement (de soumission) et sert à gérer les actions liées à l'événement
  */
 
+// Fonction asynchrone nommée handlelogin, prenant l'événement 'e' en paramètre
 async function handlelogin(e) {
     e.preventDefault(); // Empêche le rechargement de la page lors de la soumission du formulaire
     // Utilisation du nom de variable et gestion de l'affichage
-    if (errorMessageEl) { 
+    if (errorMessageEl) {
         errorMessageEl.textContent = "";
         errorMessageEl.style.display = "none"; // Masque l'élément d'erreur
     }
@@ -63,19 +67,20 @@ async function handlelogin(e) {
         if (response.ok) {
             // Utilisation de sessionStorage plutot que localStorage
             sessionStorage.setItem("authToken", data.token);
-            sessionStorage.setItem("userId", data.userId); 
+            sessionStorage.setItem("userId", data.userId);
             window.location.href = "index.html"; // Redirige vers la page d'accueil
-            
-        // Gestion de l'erreur 401 et 404
+
+
+            // Gestion de l'erreur 401 et 404
         } else if (response.status === 401 || response.status === 404) {
             if (errorMessageEl) {
-                errorMessageEl.textContent = "Email ou mot de passe incorrect."; 
+                errorMessageEl.textContent = "Email ou mot de passe incorrect.";
                 // Propriété pour afficher l'élément : style.display = "block"
-                errorMessageEl.style.display = "block"; 
+                errorMessageEl.style.display = "block";
             }
             passwordInput.value = ""; // Efface le mot de passe
         }
-        
+
     } catch (error) {
         // Gère les erreurs réseau (API éteinte, etc...)
         console.error("Erreur lors de la connexion au serveur :", error);
