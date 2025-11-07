@@ -51,7 +51,7 @@
 		<section id="portfolio">
 			<div class="portfolio-btn-admin">
 				<h2>Mes Projets</h2>
-				<a href="#" class="btn-edit" id="btn-projets-admin"><i class="fa-solid fa-pen-to-square"></i>
+				<a href="#modal1" class="btn-edit" id="btn-projets-admin"><i class="fa-solid fa-pen-to-square"></i>
 					modifier</a>
 			</div>
 			<div class="filters"></div> <!-- Les boutons/filtres sont générés ici -->
@@ -79,6 +79,47 @@
 			</ul>
 		</nav>
 	</footer>
+
+	<aside id="modal1" class="modal" aria-hidden="true" role="dialog" aria-labelledby="title-modal"
+		style="display: none;">
+		<div class="modal-wrapper js-modal-stop">
+			<div class="modal-gallery-view">
+				<button class="js-modal-close close-button" aria-label="closing modal">
+					<i class="fa-solid fa-xmark"></i>
+				</button>
+				<h3 id="title-modal">Galerie photos</h3>
+				<div class="modal-gallery"></div>
+				<figure class="gallery-modal-item" data-id="[ID_DU_TRAVAIL]">
+					<img src="[URL_IMAGE]" alt="[TITRE_TRAVAIL]">
+					<button class="delete-work-btn" data-id="[ID_DU_TRAVAIL]">
+						<i class="fa-solid fa-trash-can"></i>
+					</button>
+				</figure>
+				<div class="modal-separator"></div>
+				<button id="add-photo-btn" class="modal-button">Ajouter une photo</button>
+			</div>
+			<div class="modal-add-view">
+				<button class="js-modal-return return-button" aria-label="return gallery">
+					<i class="fa-solid fa-arrow-left"></i>
+				</button>
+				<button class="js-modal-close close-button" aria-label="closing modal">
+					<i class="fa-solid fa-xmark"></i>
+				</button>
+				<h3 id="title-modal-add">Ajout photo</h3>
+				<form id="add-work-form">
+					<div class="image-upload-area"></div>
+					<label for="photo-title">Titre</label>
+					<input type="text" name="photo-title" id="photo-title">
+					<label for="photo-category">Catégorie</label>
+					<select name="photo-category" id="photo-category">
+					</select>
+					<div class="modal-separator"></div>
+					<button type="submit" class="modal-button modal-validate-btn" disabled>Valider</button>
+				</form>
+			</div>
+		</div>
+	</aside>
+
 </body>
 
 </html>

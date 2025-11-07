@@ -369,7 +369,7 @@ footer {
 	font-size: 12px;
 }
 
-/* Bouton edition projets*/
+/* Bouton edition projets */
 .btn-edit {
     display: none;
     color: black;
@@ -394,3 +394,127 @@ footer {
 .portfolio-header-admin h2 {
     margin: 0; 
 }
+
+
+/* Première modale */
+
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.3); /* Fond semi-transparent */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    /* Rendu visible par JS */
+    z-index: 2000; /* Assure d'être au-dessus de tout, y compris la bannière admin */
+}
+
+.modal-wrapper {
+    background-color: white;
+    padding: 30px;
+    border-radius: 10px; /* Coins arrondis */
+    max-width: 630px; /* Largeur demandée (630px) */
+    width: 100%;
+    max-height: 90vh;
+    overflow-y: auto;
+    position: relative; 
+}
+
+.modal-wrapper h3 {
+    font-family: 'Work Sans', sans-serif;
+    font-size: 26px;
+    font-weight: 400;
+    text-align: center;
+    margin-bottom: 50px; /* Espace après le titre */
+}
+
+.close-button {
+    position: absolute;
+    top: 25px;
+    right: 30px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 20px;
+}
+
+.modal-gallery {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr); 
+    gap: 10px;
+    /* Hauteur cible de la maquette (688px) sera atteinte via le contenu/padding */
+}
+
+.modal-button {
+    font-family: 'Syne';
+    font-weight: 700;
+    color: white;
+    background-color: #1D6154;
+    padding: 10px 30px;
+    border-radius: 60px;
+    border: none;
+    cursor: pointer;
+    display: block; 
+    width: 250px; /* Largeur plus petite */
+    margin: 30px auto 0 auto;
+    text-align: center;
+}
+
+.modal-separator {
+    width: 75%;
+    height: 1px;
+    background-color: #EAEAEA; 
+    margin: 40px auto; /* Centre le trait verticalement */
+}
+
+
+/* Deuxième modale */
+
+
+.modal-add-view { /* Masque la vue "Ajout Photo" par défaut */
+    display: none; 
+    padding: 0 50px;
+}
+
+.return-button {
+    position: absolute;
+    top: 25px;
+    left: 30px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 20px;
+}
+
+#add-work-form {
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+    gap: 7px;
+}
+
+#add-work-form label {
+    font-size: 14px;
+    margin-top: 20px;
+    margin-bottom: 5px;
+}
+
+#add-work-form input[type="text"],
+#add-work-form select {
+    height: 50px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    padding: 0 15px;
+    font-size: 14px;
+    background-color: white;
+}
+
+.modal-validate-btn {
+    background-color: #A7A7A7;
+    margin-top: 30px;
+}
+
+/* Grille gallerie de la modale */

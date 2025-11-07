@@ -4,7 +4,7 @@
 /********************************************************************************/
 
 
-/* PREMIERE ETAPE : Utilisation de Fetch pour la récupération des données du back-end. */
+/* PREMIERE ÉTAPE : Utilisation de Fetch pour la récupération des données du back-end. */
 
 let allWorks = []; // Variable globale pour stocker tous les travaux
 let categories = []; // Variable globale pour stocker les catégories
@@ -18,7 +18,7 @@ async function fetchWorks() { /* Création d'une fonction asynchrone pour récup
 };
 
 
-//* DEUXIEME ETAPE : Création du contenu dynamique du site (photos de la biblioteque de l'architecte)
+//* DEUXIEME ÉTAPE : Création du contenu dynamique du site (photos de la biblioteque de l'architecte)
 
 async function displayGallery(works) { // Création d'une fonction asynchrone pour afficher la galerie, utilise "await" pour attendre les données de l’API
 
@@ -42,7 +42,7 @@ async function displayGallery(works) { // Création d'une fonction asynchrone po
 }
 
 
-//* Troisième étape : Affichage dynamique des travaux dans la galerie
+//* TROISIEME ÉTAPE : Affichage dynamique des travaux dans la galerie
 
 // Récupération des catégories depuis le backend
 async function fetchCategories() {
@@ -87,7 +87,8 @@ async function createFilterButtons(listeCategories) { // Fonction pour créer le
   });
 }
 
-//* QUATRIEME ETAPE : Affichage UI avec admin connecté
+
+//* QUATRIEME ÉTAPE : Affichage UI avec admin connecté
 
 // Fonction pour vérifier si l'utilisateur est connecté (mode admin), met à jour l'interface utilisateur
 function checkAndUpdateAdminMode() {
@@ -105,7 +106,7 @@ function checkAndUpdateAdminMode() {
       sessionStorage.removeItem("authToken");
       window.location.href = "index.html";
     });
-    
+
     if (adminBanner) {
       adminBanner.style.display = "flex";
     }
@@ -131,6 +132,107 @@ function checkAndUpdateAdminMode() {
     }
   }
 }
+
+
+// CINQUIEME ÉTAPE : Fonctionnement des modales
+// Le but principal de ce code est de contrôler l'état de la modale (ouverte/fermée) et de gérer l'interface (basculement entre les deux vues)
+
+let modal = null
+// Empêche le clic dans le contenu blanc de fermer la Modale 
+const stopPropagation = function (e) {
+  e.stopPropagation()
+}
+
+// Fermeture de la modale
+const closeModal = function(e) {
+  if (e && e.target !== modal && !e.target.closest('.js-modal-close')) { // Si le clic est sur le contenu ou le fond et non sur la croix, on l'ignore
+  return;
+}
+
+if (modal === null) return // Si la modale est null, on ne fait rien
+
+e.preventDefault()
+//Retrait des écouteurs afin d'éviter les fuites de mémoires
+modal.removeEventListener('click', closeModal)
+modal.querySelector('.js-modal-close').removeEventListener('click', closeModal)
+modal.querySelector('.js-modal-stop').removeEventListener('click', stopPropagation)
+
+// Masquer la modale et la rendre inaccessible
+modal.style.display = 'none'
+modal.setAttribute('aria-hidden', 'true')
+modal.removeAttribute('aria-modal')
+modal = null
+}
+
+//Ouverture de la modale
+const openModal = function (e) {
+  e.preventDefault()
+  modal = document.getElementById('modal1')
+
+  if (modal) {
+    modal.style.display = 'flex' // Rend la modal visible
+    modal.setAttribute('aria-hidden', 'false')
+    modal.setAttribute('aria-modal', 'true') //                                               A REVOIR
+
+    // Cibler TOUS les boutons de fermeture
+    const closeButtons = modal.querySelectorAll('.js-modal-close');
+
+    closeButtons.forEach(button => {
+      button.addEventListener('click', closeModal);
+    })
+
+    // Ajout des écouteurs pour la fermeture
+    modal.querySelector('.js-modal-close').addEventListener('click', closeModal)
+    modal.addEventListener('click', closeModal) // Fermeture par clic sur le fond gris
+    modal.querySelector('.js-modal-stop').addEventListener('click', stopPropagation)
+
+    // Forcer l'affichage sur la vue galerie au démarrage
+    switchToGalleryView();
+  }
+}
+
+// Changement de la vue "galerie" vers la vue "Ajout de photo"
+const switchToAddPhotoView = function () {
+  document.querySelector('.modal-gallery-view').style.display = 'none';
+  document.querySelector('.modal-add-view').style.display = 'block';
+}
+
+// Changement de la vue "Ajout de vue photo" ver la vue "gallerie"
+const switchToGalleryView = function () {
+  document.querySelector('.modal-add-view').style.display = 'none';
+  document.querySelector('.modal-gallery-view').style.display = "block"
+
+
+  // Nettoyage du formulaire lors du retour
+  document.getElementById('add-work-form').reset();
+}
+
+// Initialisation des écouteurs d'évennements
+// Charger le DOM avant d'attacher les écouteurs
+document.addEventListener('DOMContentLoaded', () => {
+
+  // Liaison du bouton "Modifier" du portfolio à l'ouverture de la Modale
+  const editBtn = document.getElementById('btn-projets-admin');
+  if (editBtn) {
+    editBtn.addEventListener('click', openModal);
+  }
+
+  //Liaison des boutons de changement des vues des modales
+  const addPhotoBtn = document.getElementById('add-photo-btn')
+  const returnBtn = document.querySelector('.js-modal-return');
+
+  if (addPhotoBtn) {
+    addPhotoBtn.addEventListener('click', switchToAddPhotoView);
+  }
+  if (returnBtn) {
+    returnBtn.addEventListener('click', switchToGalleryView);
+  }
+});
+
+
+// SIXIEME ÉTAPE : Affichage des travaux de la gallerie dans la premiere modale
+
+
 
 // Fonction init asynchrone (déclaration) pour lancer l'affichage de la galerie et modifier la page d'accueil une fois l'admin connecté
 async function init() {
