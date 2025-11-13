@@ -88,13 +88,7 @@
 					<i class="fa-solid fa-xmark"></i>
 				</button>
 				<h3 id="title-modal">Galerie photos</h3>
-				<div class="modal-gallery"></div>
-				<figure class="gallery-modal-item" data-id="[ID_DU_TRAVAIL]">
-					<img src="[URL_IMAGE]" alt="[TITRE_TRAVAIL]">
-					<button class="delete-work-btn" data-id="[ID_DU_TRAVAIL]">
-						<i class="fa-solid fa-trash-can"></i>
-					</button>
-				</figure>
+				<div class="modal-gallery"></div> <!-- Les images sont générés ici -->
 				<div class="modal-separator"></div>
 				<button id="add-photo-btn" class="modal-button">Ajouter une photo</button>
 			</div>
@@ -106,8 +100,14 @@
 					<i class="fa-solid fa-xmark"></i>
 				</button>
 				<h3 id="title-modal-add">Ajout photo</h3>
+				<div class="image-upload-area">
+					<i class="fa-solid fa-image icon-upload-photo"></i>
+					<label for="image-input" class="btn-add-photo">+ Ajouter photo</label>
+					<input type="file" id="image-input" name="image" accept=".jpg,.png" style="display: none;"> <!-- NONE ? --> <!-- L'image est prévisualisée ici -->
+					<p>jpg, png : 4mo max</p>
+					<img id="image-preview" class="image-preview" src="#" alt="Aperçu de la photo ajoutée" style="display: none;"> <!-- A VOIR -->
+				</div>
 				<form id="add-work-form">
-					<div class="image-upload-area"></div>
 					<label for="photo-title">Titre</label>
 					<input type="text" name="photo-title" id="photo-title">
 					<label for="photo-category">Catégorie</label>
@@ -123,3 +123,9 @@
 </body>
 
 </html>
+<!--<figure class="gallery-modal-item" data-id="[ID_DU_TRAVAIL]">
+        <img src="[URL_IMAGE]" alt="[TITRE_TRAVAIL]">
+        <button class="delete-work-btn" data-id="[ID_DU_TRAVAIL]">
+        <i class="fa-solid fa-trash-can"></i>
+        </button>
+    </figure>-->
