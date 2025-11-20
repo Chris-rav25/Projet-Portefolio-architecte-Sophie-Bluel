@@ -29,15 +29,24 @@ async function displayGallery(works) { // Création d'une fonction asynchrone po
     for (const work of works) { // Pour chaque travail dans les données récupérées, création d'une figure
       let figure = document.createElement("figure"); // Conteneur pour l’image
 
-      // Ajout de la classe et du data-id pour permettre la suppression                                          A REVOIR
+      // Ajout de la classe et du data-id pour permettre la suppression
       figure.classList.add('gallery-item');
       figure.setAttribute('data-id', work.id);
 
-      // Utilisation de "innerHTML" pour insérer du HTML à l’intérieur de la balise <figure>                     A REVOIR
-      figure.innerHTML = ` 
-        <img src="${work.imageUrl}" alt="${work.title}"> 
-        <figcaption>${work.title}</figcaption>
-      `; // insère une image dont l’adresse vient de l’API (work.imageUrl) et une légende (work.title)
+      // Creation de l'image
+      let img = document.createElement("img")
+      img.src = work.imageUrl; // Défini l'URL de la source
+      img.alt = work.title; // Défini le texte
+
+      // Création de la légende "figcaption" (élément HTML de légende d'une figure) A REVOIR
+      let figcaption = document.createElement("figcaption")
+      // Utilisation de text.content
+      figcaption.textContent = work.title;
+
+      // Assemblage des éléments
+      figure.appendChild(img)
+      figure.appendChild(figcaption)
+
       gallery.appendChild(figure); // Ajoute chaque figure à la galerie
     }
   } catch (error) { //* Si ça ne fonctionne pas, affiche une erreur dans la console
@@ -442,6 +451,65 @@ const checkFormValidation = function () {
   }
 };
 
+
+/** Création de la Fonction de Mise à Jour Dynamique
+ * Ajoute un nouveau travail (newWork) au DOM (galerie principale et modale)
+ * sans recharger la page, et met à jour le tableau en mémoire.
+ * @param {Object} newWork - L'objet travail retourné par l'API (avec id, imageUrl, title, categoryId).
+ */
+
+function updateGalleryAfterAdd(newWork) {
+  // 1 - Mise à jour du tableau global en mémoire (nécessaire pour les filtres et futures modales)
+  allWorks.push(newWork);
+
+
+  const gallery = document.querySelector(".gallery"); // Mise à jour de la gallerie principale
+
+  let figure = document.createElement("figure");
+  figure.classList.add('gallery-item');
+  figure.setAttribute('data-id', newWork.id);
+
+  let img = document.createElement("img");
+  img.src = newWork.imageUrl;
+  img.alt = newWork.title;
+
+  let figcaption = document.createElement("figcaption")
+  figcaption.textContent = newWork.title;
+
+  figure.appendChild(img);
+  figure.appendChild(figcaption);
+  gallery.appendChild(figure); // Ajout dans le DOM principal
+
+  // 2 - Mise à jour de la galerie de la Modale
+  const modalGalleryContainer = document.querySelector('.modal-gallery')
+
+  const figureModal = document.createElement('figure');
+  figureModal.classList.add('gallery-modal-item');
+  figureModal.setAttribute('data-id', newWork.id);
+
+  const imgModal = document.createElement('img');
+  imgModal.src = newWork.imageUrl;
+  imgModal.alt = newWork.title;
+
+  // Création du bouton de suppression
+  const deleteBtn = document.createElement('button');
+  deleteBtn.classList.add('delete-work-btn');
+  deleteBtn.setAttribute('data-id', newWork.id);
+  deleteBtn.innerHTML = '<i class="fa-solid fa-trash-can"></i>';
+
+  // Attacher immédiatement l'écouteur de suppression au nouveau bouton
+  deleteBtn.addEventListener('click', (e) => {
+    e.preventDefault();
+    const idToDelete = parseInt(e.currentTarget.dataset.id);
+    deleteWork(idToDelete); // Utilisation de la fonction existante
+  });
+
+  figureModal.appendChild(imgModal);
+  figureModal.appendChild(deleteBtn);
+  modalGalleryContainer.appendChild(figureModal); // Ajout dans le DOM de la modale
+}
+
+
 // Intégration de la Soumission (Fetch POST) du formulaire
 // Gère l'envoi des données (FormData) à l'API via fetch en POST et gère le succès/échec de la requête
 
@@ -475,7 +543,6 @@ async function handleFormSubmission(e) {
 
   // Envoie via Fetch POST
   try {
-
     const response = await fetch("http://localhost:5678/api/works", {
       method: 'POST',
       headers: {
@@ -484,16 +551,17 @@ async function handleFormSubmission(e) {
       body: formData
     });
 
-
     // Gestion des réponses de l'API
     if (response.ok) { // Statut 200
 
       const newWork = await response.json();
 
+      // Affichage dynamique sans rechargement de page
+      updateGalleryAfterAdd(newWork);
+
       // Netoyage après succès
       document.getElementById('add-work-form').reset();
       switchToGalleryView(); // Tester le rechargement de la page (F5) pour vérifier l'affichage
-
     } else { // Gestion détaillée des erreurs HTTP (400, 401, 500)
 
       const status = response.status;
@@ -523,7 +591,6 @@ async function handleFormSubmission(e) {
     checkFormValidation();
   }
 }
-
 
 
 // Fonction init asynchrone (déclaration) pour lancer l'affichage de la galerie et modifier la page d'accueil une fois l'admin connecté
