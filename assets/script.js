@@ -59,21 +59,25 @@ async function displayGallery(works) { // Création d'une fonction asynchrone po
 
 // Récupération des catégories depuis le backend
 async function fetchCategories() {
-  const response = await fetch("http://localhost:5678/api/categories"); // Envoie une requête au serveur pour récupération  
-  const categories = await response.json(); // Attend la réponse et convertit en JSON
-  return categories; // Retourne les catégories récupérées pour les utiliser ailleurs dans le code
+  const response = await fetch("http://localhost:5678/api/categories");
+  const categories = await response.json();
+  return categories;
 }
 
 async function createFilterButtons(listeCategories) { // Fonction pour créer les boutons de filtre
   // Sélection de l’emplacement où insérer les boutons
-  const filtersDiv = document.querySelector(".filters"); // Cible la section des boutons de filtre dans le HTML
+  const filtersDiv = document.querySelector(".filters");
   filtersDiv.innerHTML = ""; // Nettoyage de la section des filtres pour éviter les doublons
 
   // Ajout du bouton "Tous"
   const buttonAll = document.createElement("button");
-  buttonAll.textContent = "Tous"; // Texte du bouton "Tous"
-  buttonAll.id = 0; // ID spécial pour le bouton "Tous" pour afficher tous les travaux
+  buttonAll.textContent = "Tous";
+  buttonAll.id = 0;
+  buttonAll.classList.add("active"); // Le bouton Tous est actif par défaut
+
   filtersDiv.appendChild(buttonAll); // Positionnement au début de la section des filtres
+
+  buttonAll.classList.add("active");
 
   // Boucle sur chaque bouton reçu pour les créer dynamiquement
   listeCategories.forEach(category => {
@@ -86,16 +90,20 @@ async function createFilterButtons(listeCategories) { // Fonction pour créer le
   // Ecouteurs de clics pour les filtres
   document.querySelectorAll(".filters button").forEach(button => {
     button.addEventListener("click", () => {
-      // Récupération de l'ID du bouton cliqué.(Convertir en nombre si l'ID est une chaine)
-      const categoryID = Number(button.id)
-      let filteredWorks = allWorks; // commencer avec la liste complète
-      //Application du filtre (sauf pour le bouton "Tous")
+      // Retirer .active de tous les boutons
+      document.querySelectorAll(".filters button").forEach(btn =>
+        btn.classList.remove("active")
+      );
+      // Ajout .active uniquement au bouton cliqué
+      button.classList.add("active");
+
+      // Filtre
+      const categoryID = Number(button.id);
+      let filteredWorks = allWorks;
       if (categoryID !== 0) {
-        filteredWorks = allWorks.filter(work => { // Garde le travail si l'ID catégorie correspond au bouton cliqué
-          return work.categoryId === categoryID; // Filtrer les travaux par catégorie
-        });
+        filteredWorks = allWorks.filter(work => work.categoryId === categoryID);
       }
-      displayGallery(filteredWorks); // Affiche la galerie avec les travaux filtrés
+      displayGallery(filteredWorks);
     });
   });
 }
@@ -186,7 +194,7 @@ const openModal = function (e) {
   if (modal) {
     modal.style.display = 'flex' // Rend la modal visible
     modal.setAttribute('aria-hidden', 'false')
-    modal.setAttribute('aria-modal', 'true') //                                               A REVOIR
+    modal.setAttribute('aria-modal', 'true') //                                               
 
     // Cibler TOUS les boutons de fermeture
     const closeButtons = modal.querySelectorAll('.js-modal-close');
@@ -215,16 +223,34 @@ const switchToAddPhotoView = function () {
   document.querySelector('.modal-add-view').style.display = 'block';
 }
 
-// Changement de la vue "Ajout de vue photo" ver la vue "gallerie"
 const switchToGalleryView = function () {
 
   document.querySelector('.modal-add-view').style.display = 'none';
-  document.querySelector('.modal-gallery-view').style.display = "block"
+  document.querySelector('.modal-gallery-view').style.display = "block";
 
+  // Réinitialisation complète du formulaire
+  const form = document.getElementById('add-work-form');
+  form.reset();
 
-  // Nettoyage du formulaire lors du retour
-  document.getElementById('add-work-form').reset();
-}
+  // Réinitialiser input file (obligatoire !)
+  const fileInput = document.getElementById('image-input');
+  fileInput.value = "";
+
+  // Réinitialiser la prévisualisation
+  const imagePreview = document.getElementById('image-preview');
+  imagePreview.src = "";
+  imagePreview.style.display = "none";
+
+  // Réafficher les éléments de la zone bleue (icône + bouton + texte)
+  const uploadElements = document.querySelectorAll('.image-upload-area > :not(#image-preview)');
+  uploadElements.forEach(el => {
+    el.style.display = '';
+  });
+
+  // Désactive le bouton valider
+  checkFormValidation();
+};
+
 
 // Initialisation des écouteurs d'évennements
 // Charger le DOM avant d'attacher les écouteurs
@@ -245,7 +271,7 @@ document.addEventListener('DOMContentLoaded', () => {
   if (returnBtn) {
     returnBtn.addEventListener('click', switchToGalleryView);
   }
-  setupImagePreview(); // Ajout de l'appel pour la prévisualisation          A REVOIR
+  setupImagePreview(); // Ajout de l'appel pour la prévisualisation       
 
   // Liaison du formulaire d'ajout à la fonction de soumission (fetch POST)
   const addWorkForm = document.getElementById('add-work-form');
@@ -255,7 +281,7 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 
-/** SIXIEME ÉTAPE : Affichage et suppression des travaux de la gallerie dans la premiere modale
+/** SIXIEME ÉTAPE : Affichage et suppression des travaux de la galerie dans la premiere modale
  * 
  * Partie 1
  * Affiche la galerie des travaux dans la première vue de la modale et attache les écouteurs de suppression
@@ -361,7 +387,7 @@ async function deleteWork(workId) {
 const setupImagePreview = function () {
   const fileInput = document.getElementById('image-input');
   const imagePreview = document.getElementById('image-preview');
-  const uploadAreaElements = document.querySelectorAll('.image-upload-area > :not(#image-preview)');    // A REVOIR
+  const uploadAreaElements = document.querySelectorAll('.image-upload-area > :not(#image-preview)');
 
   fileInput.addEventListener('change', function () {
     if (this.files && this.files[0]) {
@@ -386,7 +412,7 @@ const setupImagePreview = function () {
         imagePreview.style.display = 'none';
         uploadAreaElements.forEach(el => el.style.display = 'flex'); // Rétablir les éléments masqués
 
-        checkFormValidation(); // Mettre à jour la validation (désactiver le bouton)                       // A REVOIR
+        checkFormValidation(); // Mettre à jour la validation (désactiver le bouton)                     
         return;
       }
       // Si tout est OK, procéder à la lecture du fichier
@@ -415,7 +441,7 @@ const fillCategorySelect = function (categories) {
   select.innerHTML = ''; // Nettoyage
 
   // Ajouter l'option par défaut (vide ou non sélectionnable)
-  const defaultOption = document.createElement('option');            // A REVOIR 
+  const defaultOption = document.createElement('option');
   defaultOption.value = '';
   defaultOption.textContent = ''; // Laisse le champ vide par défaut
   select.appendChild(defaultOption);
@@ -442,7 +468,7 @@ const checkFormValidation = function () {
   const submitBtn = document.querySelector('.modal-validate-btn');
 
   // Vérifie si un fichier est sélectionné, le titre n'est pas vide et qu'une catégorie est bien selectionnée
-  if (fileInput.files[0] && titleInput.value.trim() !== '' && categorySelect.value !== '') {                  // A REVOIR
+  if (fileInput.files[0] && titleInput.value.trim() !== '' && categorySelect.value !== '') {
     submitBtn.removeAttribute('disabled');
     submitBtn.style.backgroundColor = '#1D6154'; // Couleur verte (actif)
   } else {
@@ -463,7 +489,7 @@ function updateGalleryAfterAdd(newWork) {
   allWorks.push(newWork);
 
 
-  const gallery = document.querySelector(".gallery"); // Mise à jour de la gallerie principale
+  const gallery = document.querySelector(".gallery"); // Mise à jour de la galerie principale
 
   let figure = document.createElement("figure");
   figure.classList.add('gallery-item');
@@ -530,11 +556,11 @@ async function handleFormSubmission(e) {
     alert("Erreur: Non autorisé. Veuillez vous reconnecter.");
     submitBtn.removeAttribute('disabled')
     submitBtn.textContent = 'Valider';
-    checkFormValidation();                                            // A REVOIR
+    checkFormValidation();
     return;
   }
 
-  // Création de l'objet FormData      // A REVOIR
+  // Création de l'objet FormData     
   const formData = new FormData();
 
   formData.append('image', fileInput.files[0]);
